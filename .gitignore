@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+*.env
+*.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Docker
+*.log
+*.pid
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Database
+*.db
+*.sqlite3
+postgres_data/
+
+# Pytest / Coverage
+htmlcov/
+.coverage
+.cache
+nosetests.xml
+pytest_cache/
+
+# Mac / OS files
+.DS_Store
+Thumbs.db
+
+# Pycharm
+*.iml
+.idea/
+
+# Node / Frontend (if you add a frontend later)
+node_modules/
+dist/
+build/
