@@ -1,4 +1,17 @@
-# <p align="center"> <img width="375" height="150" alt="Hostie Logo" src="https://github.com/user-attachments/assets/cfeab7b3-54bf-4fa6-ae49-cfec23f928f5" /> </p>
+<p align="center"> <img width="375" height="150" alt="Hostie Logo" src="https://github.com/user-attachments/assets/cfeab7b3-54bf-4fa6-ae49-cfec23f928f5" /> </p>
+<p align="center"> 
+            <a>
+                        <img src="https://img.shields.io/badge/python-3.11-blue" alt="Python Version">
+            </a>
+            <a>
+                        <img src="https://img.shields.io/badge/node-v20.2.0-green" alt="Node Version">
+            </a>
+            <a href="https://opensource.org/license/MIT">
+                        <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
+            </a>
+</p>
+
+---
 
 ### Multi-Tenant AI Customer Support Platform for Restaurants
 
@@ -49,8 +62,8 @@ Embeddable Chat Widget (Client Website)
 Restaurants can embed(Not Designed Yet):
 
 ```html
-<script src="https://yourdomain.com/widget.js"
-        data-api-key="restaurant_api_key">
+<script src="https://yourdomain.com/widget.js">
+        <data-api-key="restaurant_api_key">
 </script>
 ```
 And instantly activate their AI assistant on their website.
