@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, time
 
 
 # ---------- Restaurant ----------
@@ -22,6 +22,33 @@ class RestaurantWithKey(BaseModel):
     restaurant: RestaurantResponse
     api_key: str
 
+class RestaurantWithKey(BaseModel):
+    restaurant: RestaurantResponse
+    api_key: str
+
+
+# ---------- Restaurant Hours ----------
+
+class RestaurantHoursBase(BaseModel):
+    day_of_week: int = Field(ge=0, le=6)
+    open_time: time | None = None
+    close_time: time | None = None
+    is_closed: bool = False
+
+
+class RestaurantHoursCreate(BaseModel):
+    day_of_week: int
+    open_time: time | None = None
+    close_time: time | None = None
+    is_closed: bool = False
+
+
+class RestaurantHoursResponse(RestaurantHoursCreate):
+    id: UUID
+    restaurant_id: UUID
+
+    class Config:
+        from_attributes = True
 
 # ---------- Chat ----------
 

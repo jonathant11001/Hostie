@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Text, ForeignKey, DateTime
+from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Integer, Time, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -14,8 +14,21 @@ class Restaurant(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     api_keys = relationship("APIKey", back_populates="restaurant")
+    hours = relationship("RestaurantHours", back_populates="restaurant", cascade="all, delete-orphan")
     conversations = relationship("Conversation", back_populates="restaurant")
 
+class RestaurantHours(Base):
+    __tablename__ = "restaurant_hours"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    restaurant_id = Column(UUID(as_uuid=True), ForeignKey("restaurants.id"), nullable=False)
+
+    day_of_week = Column(Integer, nullable=False)  # 0 = Monday, 6 = Sunday
+    open_time = Column(Time, nullable=True)
+    close_time = Column(Time, nullable=True)
+    is_closed = Column(Boolean, default=False)
+
+    restaurant = relationship("Restaurant", back_populates="hours")
 
 class APIKey(Base):
     __tablename__ = "api_keys"
