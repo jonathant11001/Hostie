@@ -3,14 +3,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..models import Restaurant, APIKey, RestaurantHours
+from ..models import Restaurant, APIKey, WeeklySchedule
 from ..dependencies import get_db
 from ..schemas import (
     RestaurantCreate,
     RestaurantResponse,
     RestaurantWithKey,
-    RestaurantHoursCreate,
-    RestaurantHoursResponse
+    WeeklyScheduleCreate,
+    WeeklyScheduleResponse
 )
 
 router = APIRouter(prefix="/restaurants", tags=["restaurants"])
@@ -41,10 +41,10 @@ def create_restaurant(
         "api_key": api_key_value
     }
 
-@router.post("/{restaurant_id}/hours", response_model=RestaurantHoursResponse)
+@router.post("/{restaurant_id}/hours", response_model=WeeklyScheduleResponse)
 def create_or_update_hours(
     restaurant_id: UUID,
-    payload: RestaurantHoursCreate,
+    payload: WeeklyScheduleCreate,
     db: Session = Depends(get_db)
 ):
     restaurant = db.query(Restaurant).filter(
@@ -55,9 +55,9 @@ def create_or_update_hours(
         raise HTTPException(status_code=404, detail="Restaurant not found")
 
     # Prevent duplicate days (acts like upsert)
-    existing = db.query(RestaurantHours).filter(
-        RestaurantHours.restaurant_id == restaurant_id,
-        RestaurantHours.day_of_week == payload.day_of_week
+    existing = db.query(WeeklySchedule).filter(
+        WeeklySchedule.restaurant_id == restaurant_id,
+        WeeklySchedule.day_of_week == payload.day_of_week
     ).first()
 
     if existing:
@@ -68,7 +68,7 @@ def create_or_update_hours(
         db.refresh(existing)
         return existing
 
-    new_hours = RestaurantHours(
+    new_hours = WeeklySchedule(
         restaurant_id=restaurant_id,
         day_of_week=payload.day_of_week,
         open_time=payload.open_time,
@@ -82,7 +82,7 @@ def create_or_update_hours(
 
     return new_hours
 
-@router.get("/{restaurant_id}/hours", response_model=list[RestaurantHoursResponse])
+@router.get("/{restaurant_id}/hours", response_model=list[WeeklyScheduleResponse])
 def get_restaurant_hours(
     restaurant_id: UUID,
     db: Session = Depends(get_db)
@@ -94,8 +94,8 @@ def get_restaurant_hours(
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
 
-    hours = db.query(RestaurantHours).filter(
-        RestaurantHours.restaurant_id == restaurant_id
-    ).order_by(RestaurantHours.day_of_week).all()
+    hours = db.query(WeeklySchedule).filter(
+        WeeklySchedule.restaurant_id == restaurant_id
+    ).order_by(WeeklySchedule.day_of_week).all()
 
     return hours
