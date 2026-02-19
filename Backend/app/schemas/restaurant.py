@@ -1,21 +1,27 @@
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 
 
-class RestaurantCreate(BaseModel):
-    name: str
+class RestaurantProfileCreate(BaseModel):
+    restaurant_name: str
+    cuisine_type: Optional[str] = None
+    description: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
 
 
-class RestaurantResponse(BaseModel):
+class RestaurantProfileResponse(BaseModel):
     id: UUID
-    name: str
-    created_at: datetime
+    workspace_id: UUID
+    restaurant_name: str
+    cuisine_type: Optional[str] = None
+    description: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
 
     class Config:
         from_attributes = True
-
-
-class RestaurantWithKey(BaseModel):
-    restaurant: RestaurantResponse
-    api_key: str

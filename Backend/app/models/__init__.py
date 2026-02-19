@@ -1,4 +1,4 @@
-from .restaurant import Restaurant, APIKey
+from .restaurant import RestaurantProfile, APIKey
 from .chat import Conversation, Message
 from .user import User
 from .workspace import Workspace
@@ -7,7 +7,7 @@ from .special_schedule import SpecialSchedule
 
 
 __all__ = [
-    "Restaurant",
+    "RestaurantProfile",
     "APIKey",
     "Conversation",
     "Message",

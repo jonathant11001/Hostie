@@ -1,7 +1,6 @@
 from .restaurant import (
-    RestaurantCreate,
-    RestaurantResponse,
-    RestaurantWithKey,
+    RestaurantProfileCreate,
+    RestaurantProfileResponse,
 )
 from .weekly_schedule import (
     WeeklyScheduleBase,
@@ -18,9 +17,8 @@ from .special_schedule import (
 )
 
 __all__ = [
-    "RestaurantCreate",
-    "RestaurantResponse",
-    "RestaurantWithKey",
+    "RestaurantProfileCreate",
+    "RestaurantProfileResponse",
     "WeeklyScheduleBase",
     "WeeklyScheduleCreate",
     "WeeklyScheduleResponse",

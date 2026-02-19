@@ -3,60 +3,62 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..models import Restaurant, APIKey, WeeklySchedule
+from ..models import RestaurantProfile, APIKey, WeeklySchedule, Workspace
 from ..dependencies import get_db
 from ..schemas import (
-    RestaurantCreate,
-    RestaurantResponse,
-    RestaurantWithKey,
+    RestaurantProfileCreate,
+    RestaurantProfileResponse,
     WeeklyScheduleCreate,
     WeeklyScheduleResponse
 )
 
-router = APIRouter(prefix="/restaurants", tags=["restaurants"])
+router = APIRouter(prefix="/workspaces", tags=["restaurants"])
 
 
-@router.post("/", response_model=RestaurantWithKey)
-def create_restaurant(
-    payload: RestaurantCreate,
+@router.post("/{workspace_id}/restaurant", response_model=RestaurantProfileResponse)
+def create_restaurant_profile(
+    workspace_id: UUID,
+    payload: RestaurantProfileCreate,
     db: Session = Depends(get_db)
 ):
-    restaurant = Restaurant(name=payload.name)
-    db.add(restaurant)
-    db.commit()
-    db.refresh(restaurant)
+    workspace = db.query(Workspace).filter(
+        Workspace.id == workspace_id
+    ).first()
 
-    api_key_value = secrets.token_hex(32)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
 
-    api_key = APIKey(
-        key=api_key_value,
-        restaurant_id=restaurant.id
+    restaurant_profile = RestaurantProfile(
+        workspace_id=workspace_id,
+        restaurant_name=payload.restaurant_name,
+        cuisine_type=payload.cuisine_type,
+        description=payload.description,
+        address=payload.address,
+        phone=payload.phone,
+        email=payload.email
     )
-
-    db.add(api_key)
+    db.add(restaurant_profile)
     db.commit()
+    db.refresh(restaurant_profile)
 
-    return {
-        "restaurant": restaurant,
-        "api_key": api_key_value
-    }
+    return restaurant_profile
 
-@router.post("/{restaurant_id}/hours", response_model=WeeklyScheduleResponse)
+@router.post("/{workspace_id}/hours", response_model=WeeklyScheduleResponse)
 def create_or_update_hours(
-    restaurant_id: UUID,
+    workspace_id: UUID,
     payload: WeeklyScheduleCreate,
     db: Session = Depends(get_db)
 ):
-    restaurant = db.query(Restaurant).filter(
-        Restaurant.id == restaurant_id
+    workspace = db.query(Workspace).filter(
+        Workspace.id == workspace_id
     ).first()
 
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
 
     # Prevent duplicate days (acts like upsert)
     existing = db.query(WeeklySchedule).filter(
-        WeeklySchedule.restaurant_id == restaurant_id,
+        WeeklySchedule.workspace_id == workspace_id,
         WeeklySchedule.day_of_week == payload.day_of_week
     ).first()
 
@@ -69,7 +71,7 @@ def create_or_update_hours(
         return existing
 
     new_hours = WeeklySchedule(
-        restaurant_id=restaurant_id,
+        workspace_id=workspace_id,
         day_of_week=payload.day_of_week,
         open_time=payload.open_time,
         close_time=payload.close_time,
@@ -82,20 +84,20 @@ def create_or_update_hours(
 
     return new_hours
 
-@router.get("/{restaurant_id}/hours", response_model=list[WeeklyScheduleResponse])
+@router.get("/{workspace_id}/hours", response_model=list[WeeklyScheduleResponse])
 def get_restaurant_hours(
-    restaurant_id: UUID,
+    workspace_id: UUID,
     db: Session = Depends(get_db)
 ):
-    restaurant = db.query(Restaurant).filter(
-        Restaurant.id == restaurant_id
+    workspace = db.query(Workspace).filter(
+        Workspace.id == workspace_id
     ).first()
 
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
 
     hours = db.query(WeeklySchedule).filter(
-        WeeklySchedule.restaurant_id == restaurant_id
+        WeeklySchedule.workspace_id == workspace_id
     ).order_by(WeeklySchedule.day_of_week).all()
 
     return hours
