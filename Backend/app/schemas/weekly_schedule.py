@@ -21,5 +21,4 @@ class WeeklyScheduleResponse(WeeklyScheduleCreate):
     id: UUID
     restaurant_id: UUID
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

@@ -17,7 +17,7 @@ class Workspace(Base):
     created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Relationships
-    owner = relationship("User", back_populates="workspace")
+    owner = relationship("User", back_populates="workspaces")
     restaurant_profile = relationship("RestaurantProfile", back_populates="workspace", uselist=False)
     api_keys = relationship("APIKey", back_populates="workspace")
     weekly_schedules = relationship("WeeklySchedule", back_populates="workspace")

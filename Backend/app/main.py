@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from .database import engine, Base
 from .routes import restaurants, chat, users
+from app import models  #
 
 app = FastAPI(title="Hostie Backend")
+
+print(Base.metadata.tables.keys())
 
 Base.metadata.create_all(bind=engine)
 
