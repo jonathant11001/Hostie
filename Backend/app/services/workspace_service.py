@@ -3,6 +3,7 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
 from ..crud import workspace as workspace_crud
+from ..crud.restaurant import get_restaurant_profile_by_workspace
 
 
 def validate_guid(value) -> UUID | None:
@@ -14,10 +15,13 @@ def validate_guid(value) -> UUID | None:
 
 
 def create_workspace(db: Session, name: str, slug: str, owner_id: UUID, subscription_tier: str = "free"):
-    
-
     """Create a workspace (add business logic as needed)."""
-    return workspace_crud.create_workspace(db, name, slug, owner_id, subscription_tier)
+    workspace = workspace_crud.create_workspace(db, name, slug, owner_id, subscription_tier)
+    # Enforce: One workspace must have at least one restaurant
+    restaurant = get_restaurant_profile_by_workspace(db, workspace.id)
+    if not restaurant:
+        raise ValueError("A workspace must have at least one restaurant. Please create a restaurant profile for this workspace.")
+    return workspace
 
 
 def get_workspace(db: Session, workspace_id: UUID, owner_id: UUID):

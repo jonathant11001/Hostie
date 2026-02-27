@@ -5,8 +5,6 @@ from app import models  #
 
 app = FastAPI(title="Hostie Backend")
 
-print(Base.metadata.tables.keys())
-
 Base.metadata.create_all(bind=engine)
 
 app.include_router(restaurants.router)

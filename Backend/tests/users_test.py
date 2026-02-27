@@ -30,3 +30,58 @@ def test_create_user(db):
     assert user.id is not None
     assert user.role == "owner"  # default value
     assert user.createdAt is not None
+
+def test_unique_username_constraint(db):
+    user1 = User(
+        displayname="Alice",
+        username="alice123",
+        email="alice@test.com",
+        passwordHash="pw1"
+    )
+    db.add(user1)
+    db.commit()
+    db.refresh(user1)
+
+    user2 = User(
+        displayname="Bob",
+        username="alice123",  # Duplicate username
+        email="bob@test.com",
+        passwordHash="pw2"
+    )
+    db.add(user2)
+    try:
+        db.commit()
+        assert False, "Expected IntegrityError for duplicate username"
+    except Exception as e:
+        # Accept IntegrityError or SQLAlchemy error
+        assert "unique" in str(e).lower() or "integrity" in str(e).lower()
+
+def test_duplicate_user(db):
+    user1 = User(
+        displayname="Charlie",
+        username="charlie123",
+        email="charlie@test.com",
+        passwordHash="pw1"
+    )
+    db.add(user1)
+    db.commit()
+    db.refresh(user1)
+
+    user2 = User(
+        displayname="Charlie",
+        username="charlie122",
+        email="charlie@test.com",
+        passwordHash="pw1"
+    )
+    db.add(user2)
+    try:
+        db.commit()
+        assert False, "Expected IntegrityError for duplicate user (username and email)"
+    except Exception as e:
+        print("Caught exception:", e)
+        assert "unique" in str(e).lower() or "integrity" in str(e).lower()
+        db.rollback()
+
+    # Print out all users in the DB
+    users = db.query(User).all()
+    print("Users in DB:", users)

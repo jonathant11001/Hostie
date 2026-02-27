@@ -3,10 +3,14 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
 from ..crud import chat as chat_crud
+from ..crud.workspace import get_workspace_by_id
 
 
 def start_conversation(db: Session, workspace_id: UUID):
-    """Start a new conversation."""
+    """Start a new conversation, ensuring it belongs to a workspace."""
+    workspace = get_workspace_by_id(db, workspace_id)
+    if not workspace:
+        raise ValueError("Conversations must belong to a valid workspace.")
     return chat_crud.create_conversation(db, workspace_id)
 
 
