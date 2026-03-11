@@ -4,5 +4,7 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 pydantic
-pydantic[email]
+email-validator
+pytest
 alembic
+httpx

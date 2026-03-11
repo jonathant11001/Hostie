@@ -5,7 +5,9 @@ from app import models  #
 
 app = FastAPI(title="Hostie Backend")
 
+print("Attempting to create tables with SQLAlchemy...")
 Base.metadata.create_all(bind=engine)
+print("Tables creation attempted.")
 
 app.include_router(restaurants.router)
 app.include_router(chat.router)
