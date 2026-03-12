@@ -10,7 +10,6 @@ from app.database import Base
 from app.main import app
 from app.dependencies import get_db
 POSTGRES_DATABASE_URL = os.getenv("DATABASE_URL")
-print("Using DATABASE_URL:", POSTGRES_DATABASE_URL)
 
 engine = create_engine(POSTGRES_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

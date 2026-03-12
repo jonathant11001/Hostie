@@ -2,8 +2,8 @@
 
 from uuid import UUID
 from sqlalchemy.orm import Session
-from ..app.models.restaurant import RestaurantProfile
-from ..app.schemas.restaurant import RestaurantProfileCreate
+from ..models.restaurant import RestaurantProfile
+from ..schemas.restaurant import RestaurantProfileCreate
 
 
 def create_restaurant_profile(

@@ -3,7 +3,7 @@
 from uuid import UUID
 from datetime import time
 from sqlalchemy.orm import Session
-from ..app.models.weekly_schedule import WeeklySchedule
+from ..models.weekly_schedule import WeeklySchedule
 
 
 def create_weekly_schedule(

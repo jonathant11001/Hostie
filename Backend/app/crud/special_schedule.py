@@ -3,7 +3,7 @@
 from uuid import UUID
 from datetime import date, time
 from sqlalchemy.orm import Session
-from ..app.models.special_schedule import SpecialSchedule
+from ..models.special_schedule import SpecialSchedule
 
 
 def create_special_schedule(

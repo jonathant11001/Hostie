@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from ..app.models.chat import Conversation, Message
+from ..models.chat import Conversation, Message
 
 
 # ============================================================================

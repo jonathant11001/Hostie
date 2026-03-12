@@ -4,7 +4,8 @@ from .user import *
 from .restaurant import *
 from .workspace import *
 from .chat import *
-from .schedule import *
+from .weekly_schedule import *
+from .special_schedule import *
 
 __all__ = [
     # User CRUD

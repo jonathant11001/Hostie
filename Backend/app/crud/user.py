@@ -3,8 +3,8 @@
 from uuid import UUID
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from ..app.models.user import User
-from ..app.schemas.user import UserCreate
+from ..models.user import User
+from ..schemas.user import UserCreate
 
 
 def create_user(db: Session, user: UserCreate, password_hash: str) -> User:
