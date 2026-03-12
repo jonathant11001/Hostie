@@ -4,6 +4,7 @@ from google import genai
 from google.genai import types
 from ..crud import chat as chat_crud
 from ..crud.workspace import get_workspace_by_id
+from ..crud.restaurant import get_restaurant_profile_by_workspace
 from ..config import settings
 
 
@@ -12,12 +13,15 @@ def start_conversation(db: Session, workspace_id: UUID):
     workspace = get_workspace_by_id(db, workspace_id)
     if not workspace:
         raise ValueError("Conversations must belong to a valid workspace.")
-    return chat_crud.create_conversation(db, workspace_id)
+    profile = get_restaurant_profile_by_workspace(db, workspace_id)
+    if not profile:
+        raise ValueError("No restaurant profile found for this workspace.")
+    return chat_crud.create_conversation(db, profile.id)
 
 
-def add_message(db: Session, conversation_id: UUID, workspace_id: UUID, role: str, content: str):
+def add_message(db: Session, conversation_id: UUID, restaurant_id: UUID, role: str, content: str):
     """Add a message to a conversation."""
-    return chat_crud.create_message(db, conversation_id, workspace_id, role, content)
+    return chat_crud.create_message(db, conversation_id, restaurant_id, role, content)
 
 
 def get_gemini_reply(system_prompt: str, history: list[dict], user_message: str) -> str:

@@ -1,7 +1,7 @@
 from app.models.restaurant import RestaurantProfile
 from app.models.weekly_schedule import WeeklySchedule
 from app.services.context_builder import build_context
-from app.services.chat_service import get_gemini_reply
+from app.services.chat_service import get_gemini_reply, start_conversation, add_message
 
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -35,8 +35,16 @@ def test_ai_location_and_schedule(db):
     schedule_text = _format_schedule(schedules)
     system_prompt = build_context(profile) + f"\n\nWeekly Schedule:\n{schedule_text}"
 
+    conversation = start_conversation(db, profile.workspace_id)
+    history = []
+
     # Q1: Where is the restaurant?
-    reply_location = get_gemini_reply(system_prompt, [], "Where is the restaurant?")
+    q1 = "Where is the restaurant?"
+    reply_location = get_gemini_reply(system_prompt, history, q1)
+    add_message(db, conversation.id, profile.id, "user", q1)
+    add_message(db, conversation.id, profile.id, "assistant", reply_location)
+    history.append({"role": "user",      "content": q1})
+    history.append({"role": "assistant", "content": reply_location})
     print(f"\n[Location reply]\n{reply_location}")
     assert reply_location, "Expected a non-empty reply"
     assert "chicago" in reply_location.lower() or "olive" in reply_location.lower(), (
@@ -44,11 +52,12 @@ def test_ai_location_and_schedule(db):
     )
 
     # Q2: What is the weekly schedule?
-    history = [
-        {"role": "user",      "content": "Where is the restaurant?"},
-        {"role": "assistant", "content": reply_location},
-    ]
-    reply_schedule = get_gemini_reply(system_prompt, history, "What is the weekly schedule?")
+    q2 = "What is the weekly schedule?"
+    reply_schedule = get_gemini_reply(system_prompt, history, q2)
+    add_message(db, conversation.id, profile.id, "user", q2)
+    add_message(db, conversation.id, profile.id, "assistant", reply_schedule)
+    history.append({"role": "user",      "content": q2})
+    history.append({"role": "assistant", "content": reply_schedule})
     print(f"\n[Schedule reply]\n{reply_schedule}")
     assert reply_schedule, "Expected a non-empty reply"
     assert "friday" in reply_schedule.lower() or "monday" in reply_schedule.lower(), (

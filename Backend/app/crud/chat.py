@@ -1,7 +1,7 @@
 """CRUD operations for Chat models (Conversation and Message)."""
 
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, UTC
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from ..models.chat import Conversation, Message
@@ -12,19 +12,19 @@ from ..models.chat import Conversation, Message
 # ============================================================================
 
 
-def create_conversation(db: Session, workspace_id: UUID) -> Conversation:
+def create_conversation(db: Session, restaurant_id: UUID) -> Conversation:
     """Create a new conversation.
     
     Args:
         db: Database session
-        workspace_id: Workspace UUID
+        restaurant_id: RestaurantProfile UUID
         
     Returns:
         Created Conversation object
     """
     db_conversation = Conversation(
-        restaurant_id=workspace_id,
-        created_at=datetime.utcnow(),
+        restaurant_id=restaurant_id,
+        created_at=datetime.now(UTC),
     )
     db.add(db_conversation)
     db.commit()
@@ -93,7 +93,7 @@ def delete_conversation(db: Session, conversation_id: UUID) -> bool:
 def create_message(
     db: Session,
     conversation_id: UUID,
-    workspace_id: UUID,
+    restaurant_id: UUID,
     role: str,
     content: str,
 ) -> Message:
@@ -102,7 +102,7 @@ def create_message(
     Args:
         db: Database session
         conversation_id: Conversation UUID
-        workspace_id: Workspace UUID
+        restaurant_id: RestaurantProfile UUID
         role: Message role (e.g., "user", "assistant", "system")
         content: Message content text
         
@@ -111,10 +111,10 @@ def create_message(
     """
     db_message = Message(
         conversation_id=conversation_id,
-        restaurant_id=workspace_id,
+        restaurant_id=restaurant_id,
         role=role,
         content=content,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(UTC),
     )
     db.add(db_message)
     db.commit()
